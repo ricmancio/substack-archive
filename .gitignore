@@ -1,0 +1,5 @@
+.env
+substack_cookies.json
+pdfs/
+__pycache__/
+*.pyc
