@@ -139,7 +139,39 @@ def save_as_pdf(driver, url, output_dir='pdfs'):
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.TAG_NAME, "article"))
         )
-        
+
+        # Inietta CSS per adattare il contenuto alla larghezza della pagina
+        driver.execute_script("""
+            const style = document.createElement('style');
+            style.textContent = `
+                @media print {
+                    body, .main, .container, .post, article, .body, .available-content,
+                    .single-post, .post-content, .markup, .entry-content {
+                        max-width: 100% !important;
+                        width: 100% !important;
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                        margin-left: 0 !important;
+                        margin-right: 0 !important;
+                        box-sizing: border-box !important;
+                    }
+                    img {
+                        max-width: 100% !important;
+                        height: auto !important;
+                    }
+                    p, li, h1, h2, h3, h4, h5, h6, blockquote, pre, code {
+                        word-wrap: break-word !important;
+                        overflow-wrap: break-word !important;
+                        max-width: 100% !important;
+                    }
+                    pre, code {
+                        white-space: pre-wrap !important;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        """)
+
         # Stampa come PDF
         result = driver.execute_cdp_cmd("Page.printToPDF", {
             "printBackground": True,
